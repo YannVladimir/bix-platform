@@ -1,0 +1,121 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --bix-navy: 15 23 42;
+    --bix-sky: 56 189 248;
+    --bix-teal: 0 191 165;
+    --bix-surface: 248 250 252;
+    --bix-slate: 100 116 139;
+    --bix-glass: rgba(255, 255, 255, 0.7);
+    --bix-glass-border: rgba(255, 255, 255, 0.2);
+    --premium-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.1);
+  }
+
+  .dark {
+    --bix-navy: 248 250 252;
+    --bix-sky: 56 189 248;
+    --bix-teal: 20 184 166;
+    --bix-lime: 163 230 53;
+    --bix-surface: 2 6 23;
+    --bix-slate: 148 163 184;
+    --bix-glass: rgba(15, 23, 42, 0.7);
+    --bix-glass-border: rgba(255, 255, 255, 0.05);
+    --premium-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.5);
+  }
+
+  body {
+    @apply font-inter bg-bix-surface text-bix-navy transition-colors duration-300;
+    -webkit-font-smoothing: antialiased;
+  }
+}
+
+@layer components {
+  .glass {
+    @apply bg-white/70 backdrop-blur-lg border border-white/20 shadow-xl;
+  }
+
+  .glass-dark {
+    @apply bg-bix-navy/80 backdrop-blur-lg border border-white/10 shadow-2xl;
+  }
+
+  .btn-primary {
+    @apply px-6 py-3 bg-gradient-to-r from-bix-sky to-bix-teal text-white rounded-xl 
+           font-semibold transition-all duration-300 hover:shadow-lg hover:scale-[1.02] 
+           active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  .glass-card {
+    @apply bg-white/70 dark:bg-slate-900/70 backdrop-blur-xl border border-white/20 dark:border-white/5 shadow-soft;
+  }
+  
+  .glass-sidebar {
+    @apply bg-white/60 dark:bg-slate-900/40 backdrop-blur-2xl border-r border-slate-200 dark:border-white/10 shadow-[20px_0_80px_-20px_rgba(0,0,0,0.05)] dark:shadow-[20px_0_80px_-20px_rgba(0,0,0,0.3)];
+  }
+
+  .glass-mobile-nav {
+    @apply bg-slate-200/95 dark:bg-slate-800/95 backdrop-blur-2xl border-t border-white/40 dark:border-white/10 shadow-[0_-10px_40px_-15px_rgba(0,0,0,0.1)];
+  }
+
+  .nav-link {
+    @apply flex items-center gap-3 px-4 py-3 rounded-2xl transition-all duration-300;
+  }
+
+  .nav-link-active {
+    @apply bg-bix-sky text-white shadow-lg shadow-bix-sky/30;
+  }
+
+  .nav-link-inactive {
+    @apply text-bix-slate hover:bg-white/50 dark:hover:bg-white/5 hover:text-bix-navy dark:hover:text-white;
+  }
+
+  .premium-table {
+    @apply w-full text-left border-separate border-spacing-y-3;
+  }
+
+  .premium-table th {
+    @apply px-6 py-4 text-xs font-bold uppercase tracking-wider text-bix-slate/60;
+  }
+
+  .premium-table tr {
+    @apply transition-transform duration-300 hover:-translate-y-1;
+  }
+
+  .premium-table td {
+    @apply px-6 py-4 bg-white/70 dark:bg-slate-900/70 backdrop-blur-sm first:rounded-l-3xl last:rounded-r-3xl;
+  }
+
+  .status-badge {
+    @apply px-3 py-1 rounded-full text-xs font-bold uppercase;
+  }
+
+  .status-active {
+    @apply bg-green-500/10 text-green-600 dark:text-green-400;
+  }
+
+  .status-inactive {
+    @apply bg-red-500/10 text-red-600;
+  }
+
+  .shadow-soft {
+    box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.05);
+  }
+
+  .input-field {
+    @apply w-full px-4 py-3 rounded-xl border border-bix-slate/20 bg-white/50 
+           focus:outline-none focus:ring-2 focus:ring-bix-sky/30 focus:border-bix-sky 
+           transition-all duration-200 placeholder:text-bix-slate/50;
+  }
+}
+
+.bix-gradient-text {
+  @apply bg-gradient-to-r from-bix-sky to-bix-teal bg-clip-text text-transparent font-bold;
+}
+
+.bix-hero-bg {
+  @apply bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-bix-sky/10 via-bix-surface to-bix-teal/5;
+}

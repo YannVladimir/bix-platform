@@ -1,0 +1,10 @@
+# Uploaded runtime files
+backend/uploads/*
+
+# Local copies of jars already resolved via Maven
+backend/libs/
+
+# OS / editor
+.DS_Store
+.idea/
+.vscode/

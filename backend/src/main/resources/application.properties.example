@@ -1,0 +1,10 @@
+# Copy this file to application-local.properties (gitignored) for local overrides,
+# or export these as real environment variables before running the app.
+
+DB_URL=jdbc:postgresql://localhost:5432/bix
+DB_USERNAME=postgres
+DB_PASSWORD=postgres
+
+# Generate your own, e.g.: openssl rand -hex 32
+JWT_SECRET=replace-with-a-unique-random-secret-at-least-32-bytes
+JWT_EXPIRATION=86400000
