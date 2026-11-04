@@ -8,3 +8,9 @@ DB_PASSWORD=postgres
 # Generate your own, e.g.: openssl rand -hex 32
 JWT_SECRET=replace-with-a-unique-random-secret-at-least-32-bytes
 JWT_EXPIRATION=86400000
+
+# Optional. When BOTH are set, a SUPER_ADMIN account is created (or
+# upgraded/verified) on startup with this email/password. Leave unset to
+# skip bootstrapping an admin account entirely. Never commit real values.
+ADMIN_EMAIL=
+ADMIN_PASSWORD=
