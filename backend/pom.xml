@@ -80,6 +80,13 @@
 			<scope>runtime</scope>
 		</dependency>
 
+		<!-- In-memory DB for tests, so the test suite doesn't require a live Postgres instance -->
+		<dependency>
+			<groupId>com.h2database</groupId>
+			<artifactId>h2</artifactId>
+			<scope>test</scope>
+		</dependency>
+
 		<!-- Image Compression -->
 		<dependency>
 			<groupId>net.coobird</groupId>
