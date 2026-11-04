@@ -1,4 +1,3 @@
-import React from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 
 const ProtectedRoute = ({ children, allowedRoles }) => {
@@ -29,7 +28,7 @@ const ProtectedRoute = ({ children, allowedRoles }) => {
     }
 
     return children;
-  } catch (error) {
+  } catch {
     localStorage.removeItem('token');
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
