@@ -1,32 +1,28 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import logo from '../assets/logo-bix.webp';
 import smallLogo from '../assets/small-logo.png';
-import { 
-  Package, 
-  ShoppingCart, 
-  Users, 
+import {
+  Package,
+  ShoppingCart,
   User as UserIcon,
-  Settings, 
-  LayoutDashboard, 
-  LogOut, 
-  FolderTree, 
-  Plus, 
-  X, 
-  TrendingUp, 
-  DollarSign, 
-  Activity, 
+  Settings,
+  LayoutDashboard,
+  LogOut,
+  FolderTree,
+  Plus,
+  X,
+  DollarSign,
+  Activity,
   Archive,
   Menu,
   Sun,
   Moon,
   Search,
   Check,
-  Bell,
   ChevronRight,
   ChevronLeft,
   ChevronDown,
-  Filter,
   ShieldCheck,
   CheckCircle,
   XCircle,
@@ -34,7 +30,7 @@ import {
   Trash2
 } from 'lucide-react';
 import api from '../api/axios';
-import { toast, Toaster } from 'react-hot-toast';
+import { toast } from 'react-hot-toast';
 import { translations } from '../translations';
 
 const Pagination = ({ totalItems, itemsPerPage, currentPage, onPageChange, t }) => {
@@ -134,7 +130,6 @@ const UserDashboard = () => {
   const [categories, setCategories] = useState([]);
   const [approvals, setApprovals] = useState([]);
   const [myPendingRequests, setMyPendingRequests] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(8);
@@ -169,6 +164,22 @@ const UserDashboard = () => {
     } catch (e) {
       console.error('Error fetching profile:', e);
     }
+
+    // The JWT issued at login carries the company name as a claim (see
+    // backend JwtUtils#generateToken), but this was never read on the
+    // frontend, so the sidebar always showed the "Company Portal"
+    // placeholder instead of the user's actual company name.
+    const token = localStorage.getItem('token');
+    if (token) {
+      try {
+        const payload = JSON.parse(atob(token.split('.')[1]));
+        if (payload.companyName) {
+          setCompanyName(payload.companyName);
+        }
+      } catch (e) {
+        console.error('Error decoding token for company name:', e);
+      }
+    }
   };
 
   useEffect(() => {
@@ -188,7 +199,6 @@ const UserDashboard = () => {
   }, [isDarkMode]);
 
   const fetchData = async () => {
-    setIsLoading(true);
     try {
       if (activeTab === 'products' || activeTab === 'overview') {
         const res = await api.get('/api/products');
@@ -210,7 +220,7 @@ const UserDashboard = () => {
         try {
           const res = await api.get('/api/approvals');
           setApprovals(res.data);
-        } catch (e) {
+        } catch {
           // Ignore 403 for non-managers
         }
       }
@@ -219,7 +229,7 @@ const UserDashboard = () => {
       try {
         const res = await api.get('/api/approvals/my-pending');
         setMyPendingRequests(res.data);
-      } catch (e) {
+      } catch {
         // Silently fail if not logged in or other issues
       }
     } catch (error) {
@@ -228,8 +238,6 @@ const UserDashboard = () => {
       } else {
         toast.error('Failed to fetch data');
       }
-    } finally {
-      setIsLoading(false);
     }
   };
 
@@ -400,7 +408,7 @@ const UserDashboard = () => {
           </div>
         </header>
 
-        {activeTab === 'overview' && <OverviewView products={products} sales={sales} stock={stock} categories={categories} t={t} />}
+        {activeTab === 'overview' && <OverviewView products={products} sales={sales} stock={stock} t={t} />}
         {activeTab === 'products' && (
           <ProductsView 
             products={products} 
@@ -467,9 +475,8 @@ const UserDashboard = () => {
           />
         )}
         {activeTab === 'sales' && (
-          <SalesView 
-            sales={sales} 
-            products={products}
+          <SalesView
+            sales={sales}
             t={t}
             searchTerm={searchTerm}
             onSearch={(val) => { setSearchTerm(val); setCurrentPage(1); }}
@@ -518,7 +525,7 @@ const UserDashboard = () => {
                 await api.post(`/api/approvals/${id}/${action}`);
                 toast.success(`Request ${action}d successfully`);
                 fetchData();
-              } catch (e) {
+              } catch {
                 toast.error(`Failed to ${action} request`);
               }
             }}
@@ -563,7 +570,7 @@ const UserDashboard = () => {
   );
 };
 
-const OverviewView = ({ products, sales, stock, categories, t }) => {
+const OverviewView = ({ products, sales, stock, t }) => {
   const isToday = (dateStr) => {
     const d = new Date(dateStr);
     const today = new Date();
@@ -863,7 +870,7 @@ const CategoriesView = ({ categories, myPendingRequests, onAdd, onEdit, onDelete
   );
 };
 
-const SalesView = ({ sales, products, searchTerm, onSearch, onPageChange, currentPage, itemsPerPage, onAdd, t }) => {
+const SalesView = ({ sales, searchTerm, onSearch, onPageChange, currentPage, itemsPerPage, onAdd, t }) => {
   const filtered = sales.filter(s => 
     (s.product?.name || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
     (s.soldBy?.name || '').toLowerCase().includes(searchTerm.toLowerCase())
@@ -1124,7 +1131,7 @@ const StockView = ({ stock, myPendingRequests, products, searchTerm, onSearch, o
 };
 
 
-const ProductSelect = ({ products, value, onChange, placeholder }) => {
+const ProductSelect = ({ products, value, onChange, placeholder, t }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
 
@@ -1176,7 +1183,7 @@ const ProductSelect = ({ products, value, onChange, placeholder }) => {
           >
             {filteredProducts.length === 0 ? (
               <div className="p-4 text-center text-bix-slate font-medium text-sm">
-                {t('noProductsMatch')} "{searchTerm}"
+                {t('noProductsMatch')} &quot;{searchTerm}&quot;
               </div>
             ) : (
               filteredProducts.map(p => (
@@ -1362,7 +1369,7 @@ const Modal = ({ type, item, products, categories, onClose, onSuccess, t }) => {
             <>
                 <div className="space-y-2">
                   <label className="text-xs font-black uppercase tracking-widest opacity-40">{t('selectProduct')}</label>
-                  <ProductSelect 
+                  <ProductSelect
                     products={products}
                     value={formData.productId}
                     onChange={val => {
@@ -1370,6 +1377,7 @@ const Modal = ({ type, item, products, categories, onClose, onSuccess, t }) => {
                       setFormData({ ...formData, productId: val, sellingPrice: p?.price || '' });
                     }}
                     placeholder={t('searchProducts')}
+                    t={t}
                   />
                 </div>
               <div className="grid grid-cols-2 gap-6">
@@ -1387,11 +1395,12 @@ const Modal = ({ type, item, products, categories, onClose, onSuccess, t }) => {
             <>
               <div className="space-y-2">
                 <label className="text-xs font-black uppercase tracking-widest opacity-40">{t('selectProduct')}</label>
-                <ProductSelect 
+                <ProductSelect
                   products={products}
                   value={formData.productId}
                   onChange={val => setFormData({ ...formData, productId: val })}
                   placeholder={t('searchProducts')}
+                  t={t}
                 />
               </div>
               <div className="grid grid-cols-2 gap-6">
@@ -1538,7 +1547,7 @@ const SettingsView = ({ user, t, onUpdate }) => {
       await api.put('/api/profile', profileData);
       toast.success(`${t('profile')} ${t('updated')}`);
       onUpdate();
-    } catch (e) {
+    } catch {
       toast.error(t('updateFailed'));
     } finally {
       setIsSaving(false);
@@ -1576,7 +1585,7 @@ const SettingsView = ({ user, t, onUpdate }) => {
       await api.post('/api/profile/avatar', formData);
       toast.success(t('avatarUpdated'));
       onUpdate();
-    } catch (e) {
+    } catch {
       toast.error(t('uploadFailed'));
     }
   };

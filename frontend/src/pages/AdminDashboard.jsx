@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import logo from '../assets/logo-bix.webp';
-import { 
-  Building2, Users, LayoutDashboard, Plus, Search, 
-  MoreVertical, Edit2, Trash2, X, Check, AlertCircle,
-  LogOut, Settings, Bell, ChevronRight, Sun, Moon, Menu
+import {
+  Building2, Users, LayoutDashboard, Plus, Search,
+  Edit2, Trash2, X, Check,
+  LogOut, Settings, Bell, ChevronRight, Sun, Moon
 } from 'lucide-react';
 import api from '../api/axios';
 import { toast } from 'react-hot-toast';
@@ -13,7 +13,6 @@ const AdminDashboard = () => {
   const [activeTab, setActiveTab] = useState('overview');
   const [companies, setCompanies] = useState([]);
   const [users, setUsers] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [modalType, setModalType] = useState('company'); 
   const [editingItem, setEditingItem] = useState(null);
@@ -34,7 +33,6 @@ const AdminDashboard = () => {
   }, [isDarkMode]);
 
   const fetchData = async () => {
-    setIsLoading(true);
     try {
       if (activeTab === 'companies' || activeTab === 'overview') {
         const res = await api.get('/api/admin/companies');
@@ -44,10 +42,8 @@ const AdminDashboard = () => {
         const res = await api.get('/api/admin/users');
         setUsers(res.data);
       }
-    } catch (error) {
+    } catch {
       toast.error('Failed to fetch data');
-    } finally {
-      setIsLoading(false);
     }
   };
 
@@ -170,9 +166,8 @@ const AdminDashboard = () => {
           />
         )}
         {activeTab === 'users' && (
-          <UsersView 
-            users={users} 
-            companies={companies}
+          <UsersView
+            users={users}
             onAdd={() => { setModalType('user'); setEditingItem(null); setShowModal(true); }}
             onEdit={(item) => { setModalType('user'); setEditingItem(item); setShowModal(true); }}
             onDelete={async (id) => {
@@ -327,7 +322,7 @@ const CompaniesView = ({ companies, onAdd, onEdit, onDelete }) => (
   </motion.div>
 );
 
-const UsersView = ({ users, companies, onAdd, onEdit, onDelete }) => (
+const UsersView = ({ users, onAdd, onEdit, onDelete }) => (
   <motion.div 
     initial={{ opacity: 0 }} 
     animate={{ opacity: 1 }}
@@ -413,7 +408,8 @@ const Modal = ({ type, item, companies, onClose, onSuccess }) => {
       }
       onSuccess();
     } catch (error) {
-      toast.error('Operation failed');
+      const message = typeof error.response?.data === 'string' ? error.response.data : 'Operation failed';
+      toast.error(message);
     }
   };
 

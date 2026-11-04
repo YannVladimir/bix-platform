@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { LogIn, Mail, Lock, Eye, EyeOff, Loader2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
@@ -23,7 +23,7 @@ const LoginPage = () => {
         } else if (role) {
           navigate('/dashboard', { replace: true });
         }
-      } catch (e) {
+      } catch {
         localStorage.removeItem('token');
       }
     }
